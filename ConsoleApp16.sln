@@ -1,25 +1,177 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp16", "ConsoleApp16\ConsoleApp16.csproj", "{E751B9A4-372A-4DAC-A103-3CF957BE3E32}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E751B9A4-372A-4DAC-A103-3CF957BE3E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E751B9A4-372A-4DAC-A103-3CF957BE3E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E751B9A4-372A-4DAC-A103-3CF957BE3E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E751B9A4-372A-4DAC-A103-3CF957BE3E32}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F59EAC95-4647-4341-AB0E-6B9C05D0DD9F}
-	EndGlobalSection
-EndGlobal
+using System;
+
+class Program
+{
+    static Producto[] productos = new Producto[100];
+    static int contador = 0;
+
+    static void Main(string[] args)
+    {
+int opcion;
+
+        do
+        {
+            Console.WriteLine("\n==== MENU DE PRODUCTOS ====");
+            Console.WriteLine("1. Insertar");
+            Console.WriteLine("2. Mostrar");
+            Console.WriteLine("3. Modificar");
+            Console.WriteLine("4. Eliminar");
+            Console.WriteLine("5. Buscar");
+            Console.WriteLine("6. Ordenar por Nombre (Burbuja)");
+            Console.WriteLine("7. Salir");
+            Console.Write("Seleccione una opción: ");
+            opcion = int.Parse(Console.ReadLine());
+
+            switch (opcion)
+            {
+                case 1: Insertar(); break;
+                case 2: Mostrar(); break;
+                case 3: Modificar(); break;
+                case 4: Eliminar(); break;
+                case 5: Buscar(); break;
+                case 6: Ordenar(); break;
+                case 7: break;
+                default: Console.WriteLine("Opción inválida."); break;
+            }
+
+        } while (opcion != 7);
+    }
+
+    // INSERTAR
+    static void Insertar()
+    {
+        if (contador >= 100)
+        {
+            Console.WriteLine("Arreglo lleno.");
+            return;
+        }
+
+        Producto p = new Producto();
+
+        Console.Write("Código: ");
+        p.Codigo = Console.ReadLine();
+
+        // Validar código repetido
+        for (int i = 0; i < contador; i++)
+        {
+            if (productos[i].Codigo == p.Codigo)
+            {
+                Console.WriteLine("El código ya existe.");
+                return;
+            }
+        }
+
+        Console.Write("Nombre: ");
+        p.Nombre = Console.ReadLine();
+
+        Console.Write("Cantidad: ");
+        p.Cantidad = int.Parse(Console.ReadLine());
+
+        Console.Write("Precio: ");
+        p.Precio = double.Parse(Console.ReadLine());
+
+        productos[contador] = p;
+        contador++;
+
+        Console.WriteLine("Producto insertado.");
+    }
+
+    // MOSTRAR
+    static void Mostrar()
+    {
+        Console.WriteLine("\n=== LISTA DE PRODUCTOS ===");
+
+        for (int i = 0; i < contador; i++)
+        {
+            Console.WriteLine($"Cod: {productos[i].Codigo} | Nom: {productos[i].Nombre} | Cant: {productos[i].Cantidad} | Precio: {productos[i].Precio} | Total: {productos[i].Total}");
+        }
+    }
+
+    // MODIFICAR
+    static void Modificar()
+    {
+        Console.Write("Ingrese código a modificar: ");
+        string codigo = Console.ReadLine();
+
+        for (int i = 0; i < contador; i++)
+        {
+            if (productos[i].Codigo == codigo)
+            {
+                Console.Write("Nuevo nombre: ");
+                productos[i].Nombre = Console.ReadLine();
+
+                Console.Write("Nueva cantidad: ");
+                productos[i].Cantidad = int.Parse(Console.ReadLine());
+
+                Console.Write("Nuevo precio: ");
+                productos[i].Precio = double.Parse(Console.ReadLine());
+
+                Console.WriteLine("Modificado correctamente.");
+                return;
+            }
+        }
+
+        Console.WriteLine("Código no encontrado.");
+    }
+
+    // ELIMINAR
+    static void Eliminar()
+    {
+        Console.Write("Código a eliminar: ");
+        string codigo = Console.ReadLine();
+
+        for (int i = 0; i < contador; i++)
+        {
+            if (productos[i].Codigo == codigo)
+            {
+                for (int j = i; j < contador - 1; j++)
+                {
+                    productos[j] = productos[j + 1];
+                }
+
+                productos[contador - 1] = null;
+                contador--;
+
+                Console.WriteLine("Producto eliminado.");
+                return;
+            }
+        }
+
+        Console.WriteLine("Código no encontrado.");
+    }
+
+    // BUSCAR
+    static void Buscar()
+    {
+        Console.Write("Texto a buscar: ");
+        string texto = Console.ReadLine().ToLower();
+
+        Console.WriteLine("\n--- Resultados ---");
+
+        for (int i = 0; i < contador; i++)
+        {
+            if (productos[i].Nombre.ToLower().Contains(texto) ||
+                productos[i].Codigo.ToLower().Contains(texto))
+            {
+                Console.WriteLine($"Cod: {productos[i].Codigo} | Nom: {productos[i].Nombre} | Cant: {productos[i].Cantidad} | Precio: {productos[i].Precio} | Total: {productos[i].Total}");
+            }
+        }
+    }
+
+    // ORDENAR BURBUJA
+    static void Ordenar()
+    {
+        for (int i = 0; i < contador - 1; i++)
+        {
+            for (int j = 0; j < contador - 1 - i; j++)
+            {
+                if (productos[j].Nombre.CompareTo(productos[j + 1].Nombre) > 0)
+                {
+                    Producto aux = productos[j];
+                    productos[j] = productos[j + 1];
+                    productos[j + 1] = aux;
+                }
+            }
+        }
+
+        Console.WriteLine("Productos ordenados.");
